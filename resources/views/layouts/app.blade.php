@@ -39,14 +39,28 @@
             </div>
             
             <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
-                <a href="/" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-800 text-white shadow-sm transition transform hover:scale-105">
-                    <span>📊</span> Dashboard
-                </a>
-                <a href="{{ route('shoes.create') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-brand-800 text-brand-100 transition">
-                    <span>➕</span> Tambah Sepatu
-                </a>
-            </nav>
-
+    <a href="{{ route('dashboard') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('dashboard') ? 'bg-brand-800 text-white' : 'hover:bg-brand-800 text-brand-100' }} transition">
+        <span>📊</span> Dashboard
+    </a>
+    <a href="{{ route('shoes.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->routeIs('shoes.*') ? 'bg-brand-800 text-white' : 'hover:bg-brand-800 text-brand-100' }} transition">
+        <span>👟</span> Data Sepatu
+    </a>
+    <a href="{{ route('brands.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->is('brands*') ? 'bg-brand-800 text-white' : 'hover:bg-brand-800 text-brand-100' }} transition">
+        <span>🏷️</span> Merk/Brand
+    </a>
+    <a href="{{ route('customers.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->is('customers*') ? 'bg-brand-800 text-white' : 'hover:bg-brand-800 text-brand-100' }} transition">
+        <span>👥</span> Pelanggan
+    </a>
+    <div class="pt-4 mt-4 border-t border-brand-700">
+        <p class="px-4 text-xs text-brand-200 uppercase font-semibold mb-2">Transaksi</p>
+        <a href="{{ route('transactions.index') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->is('transactions') ? 'bg-brand-800 text-white' : 'hover:bg-brand-800 text-brand-100' }} transition">
+            <span>💰</span> Penjualan
+        </a>
+        <a href="{{ route('transactions.create') }}" class="flex items-center gap-3 px-4 py-3 rounded-xl {{ request()->is('transactions/create') ? 'bg-brand-800 text-white' : 'hover:bg-brand-800 text-brand-100' }} transition">
+            <span>➕</span> Transaksi Baru
+        </a>
+    </div>
+</nav>
             <div class="p-4 border-t border-brand-800 space-y-3">
                 <div class="text-xs text-center text-brand-100 opacity-60">
                     Logged in as <b>{{ auth()->user()->name }}</b>

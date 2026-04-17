@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Shoe;
+use App\Models\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -14,13 +15,11 @@ class ShoeController extends Controller
     {
         $query = Shoe::query();
 
-        // Search Logic
         if ($request->has('search') && $request->search != '') {
             $query->where('nama', 'like', "%{$request->search}%")
                   ->orWhere('merk', 'like', "%{$request->search}%");
         }
 
-        // Sort Logic
         switch ($request->sort) {
             case 'price_asc': 
                 $query->orderBy('harga', 'asc'); 
@@ -38,7 +37,6 @@ class ShoeController extends Controller
 
         $shoes = $query->paginate(10);
         
-        // Statistik untuk Dashboard
         $stats = [
             'total_items' => Shoe::count(),
             'total_stock' => Shoe::sum('stok'),
@@ -51,13 +49,15 @@ class ShoeController extends Controller
 
     public function create()
     {
-        return view('shoes.create');
+        $brands = Brand::all();
+        return view('shoes.create', compact('brands'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
+            'brand_id' => 'nullable|exists:brands,id',
             'merk' => 'required|string|max:255',
             'ukuran' => 'required|string|max:10',
             'harga' => 'required|numeric',
@@ -75,13 +75,15 @@ class ShoeController extends Controller
 
     public function edit(Shoe $shoe)
     {
-        return view('shoes.edit', compact('shoe'));
+        $brands = Brand::all();
+        return view('shoes.edit', compact('shoe', 'brands'));
     }
 
     public function update(Request $request, Shoe $shoe)
     {
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
+            'brand_id' => 'nullable|exists:brands,id',
             'merk' => 'required|string|max:255',
             'ukuran' => 'required|string|max:10',
             'harga' => 'required|numeric',
@@ -89,7 +91,6 @@ class ShoeController extends Controller
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
-        // Hapus gambar lama jika ada upload baru
         if ($request->hasFile('image') && $shoe->image) {
             Storage::delete(str_replace('public/', '', $shoe->image));
         }
